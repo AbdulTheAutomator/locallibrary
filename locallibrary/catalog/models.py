@@ -37,6 +37,8 @@ class Genre(models.Model):
 class Book(models.Model):
     """Model representing a book (but not a specific copy of a book)."""
     title = models.CharField(max_length=200)
+
+    #deletion is prevented if used by another object - raises ProtectedError - data integrity as long as the book has associated author
     author = models.ForeignKey('Author', on_delete=models.RESTRICT, null=True)
     # Foreign Key used because book can only have one author, but authors can have multiple books.
     # Author as a string rather than object because it hasn't been declared yet in file.
@@ -52,6 +54,9 @@ class Book(models.Model):
     # Genre class has already been defined so we can specify the object above.
     genre = models.ManyToManyField(
         Genre, help_text="Select a genre for this book")
+    
+    #not using null will enforce at least a value
+    language = models.ForeignKey('Language',on_delete=models.SET_NULL,null=True)
 
     def __str__(self):
         """String for representing the Model object."""
@@ -62,6 +67,9 @@ class Book(models.Model):
         return reverse('book-detail', args=[str(self.id)])
 
 import uuid # Required for unique book instances
+#generators 32 hexadecimal number
+# generates unique identifier for each book instance
+# see models.UUIDField(...,default=uuid.uuid4,...)
 
 class BookInstance(models.Model):
 
@@ -111,3 +119,13 @@ class Author(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return f'{self.last_name}, {self.first_name}'
+
+class Language(models.Model):
+
+    name = models.Charfield(max_length=200,unique=True,help_text="Enter the book's language")
+
+    def get_absolute_url(self):
+        return reverse('language-detail',args=[str(self.id)])
+    
+    def __str__(self):
+        return f'{self.name}'
