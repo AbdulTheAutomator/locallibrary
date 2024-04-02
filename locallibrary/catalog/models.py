@@ -1,8 +1,6 @@
+
 from django.db import models
-
-# Create your models here.
 from django.urls import reverse # Used in get_absolute_url() to get URL for specified ID
-
 from django.db.models import UniqueConstraint # Constrains fields to unique values
 from django.db.models.functions import Lower # Returns lower cased value of field
 
@@ -122,7 +120,7 @@ class Author(models.Model):
 
 class Language(models.Model):
 
-    name = models.Charfield(max_length=200,unique=True,help_text="Enter the book's language")
+    name = models.CharField(max_length=200,unique=True,help_text="Enter the book's language")
 
     def get_absolute_url(self):
         return reverse('language-detail',args=[str(self.id)])
